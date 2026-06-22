@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Spasio-Temporal Bencana Indonesia</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div id="loading-indicator">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Memuat data bencana Indonesia...</p>
+    </div>
+  </div>
+
+  <div id="error-message" style="display:none;"></div>
+  <header id="main-header">
+    <div class="header-left">
+      <i class="fas fa-globe-asia header-icon"></i>
+      <div class="header-title">
+        <h1>Dashboard Bencana Indonesia</h1>
+        <span>Visualisasi Spasio-Temporal Gempa, Tsunami &amp; Banjir 2010–2026</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="data-source">Sumber: USGS &amp; BNPB</span>
+    </div>
+  </header>
+
+  <div id="app-container">
+    <aside id="sidebar-left">
+
+      <!-- Filter Tahun -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-calendar-alt"></i> Filter Tahun</h3>
+        <div class="year-range-display">
+          <span id="year-min-label">2010</span>
+          <span>—</span>
+          <span id="year-max-label">2026</span>
+        </div>
+        <div class="slider-group">
+          <label>Tahun Awal</label>
+          <input type="range" id="slider-year-min" min="2010" max="2026" value="2010" step="1" />
+        </div>
+        <div class="slider-group">
+          <label>Tahun Akhir</label>
+          <input type="range" id="slider-year-max" min="2010" max="2026" value="2026" step="1" />
+        </div>
+        <button id="btn-reset-year" class="btn-secondary">
+          <i class="fas fa-undo"></i> Reset
+        </button>
+      </div>
+
+      <!-- Toggle Layer Peta -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-layer-group"></i> Layer Peta</h3>
+        <div class="toggle-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-gempa" checked />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-circle" style="color:#e74c3c"></i> Sebaran Gempa</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-tsunami" checked />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-water" style="color:#9b59b6"></i> Tsunami</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-banjir-choropleth" checked />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-map" style="color:#3498db"></i> Choropleth Banjir</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-gempa-choropleth" />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-map" style="color:#8e44ad"></i> Dampak Gempa</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-heatmap" />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-fire" style="color:#e67e22"></i> Heatmap Gempa</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-anomaly-gempa" />
+            <span class="toggle-track"></span>
+            <span><i class="fas fa-exclamation-triangle" style="color:#e74c3c"></i> Anomali Gempa</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Mode Warna Marker -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-palette"></i> Warna Marker Gempa</h3>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="marker-color" value="depth" checked />
+            Kedalaman
+          </label>
+          <label>
+            <input type="radio" name="marker-color" value="alert" />
+            Alert Level
+          </label>
+        </div>
+      </div>
+
+      <!-- Choropleth Variable -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-sliders-h"></i> Variabel Choropleth Banjir</h3>
+        <select id="choropleth-variable">
+          <option value="count">Jumlah Kejadian</option>
+          <option value="meninggal">Korban Meninggal</option>
+          <option value="mengungsi">Pengungsi</option>
+          <option value="rumah_rusak_berat">Rumah Rusak Berat</option>
+          <option value="rumah_terendam">Rumah Terendam</option>
+        </select>
+      </div>
+
+      <!-- Animasi Time-lapse -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-play-circle"></i> Animasi Time-lapse</h3>
+        <p class="section-desc">Putar kejadian bencana dari 2010–2026</p>
+        <div class="animation-controls">
+          <button id="btn-play" class="btn-primary">
+            <i class="fas fa-play"></i> Putar
+          </button>
+          <button id="btn-pause" class="btn-secondary" disabled>
+            <i class="fas fa-pause"></i> Jeda
+          </button>
+          <button id="btn-stop" class="btn-secondary" disabled>
+            <i class="fas fa-stop"></i> Stop
+          </button>
+        </div>
+        <div class="animation-year-display">
+          Tahun: <span id="animation-year-label">—</span>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="sidebar-section">
+        <h3><i class="fas fa-chart-bar"></i> Ringkasan</h3>
+        <div class="summary-cards">
+          <div class="summary-card card-gempa">
+            <div class="card-icon"><i class="fas fa-mountain"></i></div>
+            <div class="card-info">
+              <span class="card-value" id="stat-total-gempa">—</span>
+              <span class="card-label">Total Gempa</span>
+            </div>
+          </div>
+          <div class="summary-card card-banjir">
+            <div class="card-icon"><i class="fas fa-water"></i></div>
+            <div class="card-info">
+              <span class="card-value" id="stat-total-banjir">—</span>
+              <span class="card-label">Kejadian Banjir</span>
+            </div>
+          </div>
+          <div class="summary-card card-korban">
+            <div class="card-icon"><i class="fas fa-user-injured"></i></div>
+            <div class="card-info">
+              <span class="card-value" id="stat-total-korban">—</span>
+              <span class="card-label">Korban Banjir</span>
+            </div>
+          </div>
+          <div class="summary-card card-tsunami">
+            <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="card-info">
+              <span class="card-value" id="stat-total-tsunami">—</span>
+              <span class="card-label">Event Tsunami</span>
+            </div>
+          </div>
+          <div class="summary-card card-maxmag">
+            <div class="card-icon"><i class="fas fa-bolt"></i></div>
+            <div class="card-info">
+              <span class="card-value" id="stat-max-mag">—</span>
+              <span class="card-label">Magnitudo Terkuat</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+    <main id="map-container">
+      <div id="map"></div>
+      <div id="map-tooltip" style="display:none;"></div>
+    </main>
+
+    <aside id="panel-right">
+      <!-- Tab navigation -->
+      <div class="chart-tabs">
+        <button class="tab-btn active" data-tab="tab-tren">
+          <i class="fas fa-chart-bar"></i> Tren
+        </button>
+        <button class="tab-btn" data-tab="tab-dampak">
+          <i class="fas fa-heart-broken"></i> Dampak
+        </button>
+        <button class="tab-btn" data-tab="tab-distribusi">
+          <i class="fas fa-chart-pie"></i> Distribusi
+        </button>
+        <button class="tab-btn" data-tab="tab-top10">
+          <i class="fas fa-list-ol"></i> Top 10
+        </button>
+      </div>
+
+      <!-- Tab 1: Tren Tahunan & Bulanan -->
+      <div class="tab-content active" id="tab-tren">
+        <div class="chart-block">
+          <h4>Tren Kejadian per Tahun</h4>
+          <canvas id="chart-tren-tahunan"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Pola Musiman per Bulan</h4>
+          <canvas id="chart-tren-bulanan"></canvas>
+        </div>
+      </div>
+
+      <!-- Tab 2: Dampak Banjir -->
+      <div class="tab-content" id="tab-dampak">
+        <div class="chart-block">
+          <h4>Korban Meninggal per Tahun</h4>
+          <canvas id="chart-dampak-meninggal"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Pengungsi per Tahun</h4>
+          <canvas id="chart-dampak-pengungsi"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Rumah Rusak per Tahun</h4>
+          <canvas id="chart-dampak-rumah"></canvas>
+        </div>
+      </div>
+
+      <!-- Tab 3: Distribusi Magnitudo -->
+      <div class="tab-content" id="tab-distribusi">
+        <div class="chart-block">
+          <h4>Distribusi Magnitudo Gempa</h4>
+          <canvas id="chart-mag-distribusi"></canvas>
+        </div>
+      </div>
+
+      <!-- Tab 4: Top 10 -->
+      <div class="tab-content" id="tab-top10">
+        <div class="chart-block">
+          <h4>Top 10 Provinsi — Kejadian Banjir</h4>
+          <canvas id="chart-top10-banjir"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Top 10 Provinsi — Korban Terbanyak</h4>
+          <canvas id="chart-top10-korban"></canvas>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+
+</html>

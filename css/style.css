@@ -1,0 +1,717 @@
+/* ============================================================
+   style.css — Dashboard Bencana Indonesia
+   Theme: Light Professional
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   CSS VARIABLES
+   ---------------------------------------------------------- */
+:root {
+  /* Warna utama */
+  --primary:        #2c3e50;
+  --primary-light:  #34495e;
+  --accent:         #2980b9;
+  --accent-hover:   #2471a3;
+
+  /* Background */
+  --bg-app:         #f0f2f5;
+  --bg-sidebar:     #ffffff;
+  --bg-panel:       #ffffff;
+  --bg-header:      #2c3e50;
+  --bg-card:        #f8f9fa;
+  --bg-section:     #f8f9fa;
+
+  /* Teks */
+  --text-primary:   #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-light:     #ffffff;
+  --text-muted:     #95a5a6;
+
+  /* Border */
+  --border:         #e0e4e8;
+  --border-light:   #f0f2f5;
+
+  /* Bencana */
+  --color-gempa:    #e74c3c;
+  --color-banjir:   #2980b9;
+  --color-tsunami:  #8e44ad;
+  --color-korban:   #e67e22;
+
+  /* Dimensi layout */
+  --header-height:  56px;
+  --sidebar-width:  260px;
+  --panel-width:    320px;
+
+  /* Misc */
+  --radius:         8px;
+  --radius-sm:      4px;
+  --shadow:         0 1px 4px rgba(0,0,0,0.10);
+  --shadow-md:      0 2px 12px rgba(0,0,0,0.10);
+  --transition:     0.2s ease;
+
+  /* Font */
+  --font:           'Inter', sans-serif;
+}
+
+/* ----------------------------------------------------------
+   RESET & BASE
+   ---------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-app);
+}
+
+/* ----------------------------------------------------------
+   LOADING OVERLAY
+   ---------------------------------------------------------- */
+#loading-indicator {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-primary);
+}
+
+.loading-content p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------------
+   ERROR MESSAGE
+   ---------------------------------------------------------- */
+#error-message {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e74c3c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  z-index: 9998;
+  box-shadow: var(--shadow-md);
+}
+
+/* ----------------------------------------------------------
+   HEADER
+   ---------------------------------------------------------- */
+#main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--bg-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 22px;
+  color: #3498db;
+}
+
+.header-title h1 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-light);
+  line-height: 1.2;
+}
+
+.header-title span {
+  font-size: 11px;
+  color: #bdc3c7;
+}
+
+.header-right .data-source {
+  font-size: 11px;
+  color: #bdc3c7;
+  background: rgba(255,255,255,0.1);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+/* ----------------------------------------------------------
+   APP CONTAINER — 3 KOLOM
+   ---------------------------------------------------------- */
+#app-container {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr var(--panel-width);
+  gap: 0;
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------
+   SIDEBAR KIRI
+   ---------------------------------------------------------- */
+#sidebar-left {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#sidebar-left::-webkit-scrollbar { width: 4px; }
+#sidebar-left::-webkit-scrollbar-track { background: transparent; }
+#sidebar-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.sidebar-section {
+  background: var(--bg-section);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-section h3 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-section h3 i {
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.section-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Year slider */
+.year-range-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 4px 0;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slider-group label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--border);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--accent-hover);
+}
+
+/* Toggle switch */
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-track {
+  width: 32px;
+  height: 16px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-label input:checked + .toggle-track {
+  background: var(--accent);
+}
+
+.toggle-label input:checked + .toggle-track::after {
+  transform: translateX(16px);
+}
+
+/* Radio group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.radio-group input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+/* Select */
+select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: var(--font);
+  cursor: pointer;
+  outline: none;
+}
+
+select:focus {
+  border-color: var(--accent);
+}
+
+/* Animation controls */
+.animation-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.animation-year-display {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 4px;
+  background: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.animation-year-display span {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Buttons */
+.btn-primary {
+  flex: 1;
+  padding: 6px 10px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 6px 10px;
+  background: white;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all var(--transition);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-app);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Summary Cards */
+.summary-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  border-left: 3px solid transparent;
+}
+
+.card-gempa   { border-left-color: var(--color-gempa); }
+.card-banjir  { border-left-color: var(--color-banjir); }
+.card-korban  { border-left-color: var(--color-korban); }
+.card-tsunami { border-left-color: var(--color-tsunami); }
+.card-maxmag  { border-left-color: #27ae60; }
+
+.card-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.card-gempa   .card-icon { background: #fdeaea; color: var(--color-gempa); }
+.card-banjir  .card-icon { background: #eaf4fb; color: var(--color-banjir); }
+.card-korban  .card-icon { background: #fef5ea; color: var(--color-korban); }
+.card-tsunami .card-icon { background: #f5eafb; color: var(--color-tsunami); }
+.card-maxmag  .card-icon { background: #eafaf1; color: #27ae60; }
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.card-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ----------------------------------------------------------
+   PETA TENGAH
+   ---------------------------------------------------------- */
+#map-container {
+  position: relative;
+  overflow: hidden;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Leaflet popup custom */
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-md) !important;
+  font-family: var(--font) !important;
+  font-size: 12px !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.6 !important;
+}
+
+.popup-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.popup-key {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.popup-val {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 11px;
+}
+
+.popup-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+}
+
+.badge-tsunami   { background: var(--color-tsunami); }
+.badge-red       { background: #e74c3c; }
+.badge-orange    { background: #e67e22; }
+.badge-yellow    { background: #f39c12; color: #333; }
+.badge-green     { background: #27ae60; }
+.badge-none      { background: #95a5a6; }
+
+/* Leaflet legend */
+.leaflet-legend {
+  background: white;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1.8;
+  min-width: 130px;
+}
+
+.leaflet-legend h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-swatch-rect {
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   PANEL KANAN — Charts
+   ---------------------------------------------------------- */
+#panel-right {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Tab navigation */
+.chart-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-section);
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 4px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: all var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tab-btn i {
+  font-size: 13px;
+}
+
+.tab-btn:hover {
+  color: var(--accent);
+  background: white;
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: white;
+}
+
+/* Tab content */
+.tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+.tab-content::-webkit-scrollbar { width: 4px; }
+.tab-content::-webkit-scrollbar-track { background: transparent; }
+.tab-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.chart-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart-block h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-block canvas {
+  max-height: 180px;
+}
