@@ -77,12 +77,6 @@ d:/visdat_spasio_bencana/
 │   ├── filters.js           # Penanganan event filter tahun, checkbox layer, dan input kontrol
 │   └── main.js              # Entry-point utama yang mengoordinasikan seluruh alur inisialisasi dashboard
 │
-├── data/                    # Sumber data mentah dalam format CSV & GeoJSON
-│   ├── clean_bnpb_all.csv   # Data historis bencana banjir & dampak korban dari BNPB
-│   ├── clean_usgs.csv       # Data historis seismik/gempa bumi dari USGS
-│   ├── clean_provinsi.geojson # Batas wilayah administratif provinsi di Indonesia
-│   └── clean_kabupaten.geojson# Batas wilayah administratif kabupaten/kota di Indonesia
-│
 └── ml/                      # Direktori analisis Machine Learning
     └── Anomaly_Detection.ipynb # Notebook deteksi anomali gempa bumi (Python/Jupyter)
 ```
