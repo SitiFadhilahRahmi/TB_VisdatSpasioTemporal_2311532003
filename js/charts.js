@@ -37,7 +37,7 @@ const BASE_CHART_OPTIONS = {
       bodyFont: { family: "Inter", size: 11 },
       padding: 8,
       callbacks: {
-        label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y?.toLocaleString("id-ID") ?? ctx.parsed.toLocaleString("id-ID")}`
+        label: ctx => ` ${ctx.dataset.label}: ${ctx.raw?.toLocaleString("id-ID") ?? ctx.raw}`
       }
     }
   },
@@ -413,6 +413,7 @@ function renderChartTop10Banjir() {
           y: {
             ticks: {
               font: { family: "Inter", size: 9 },
+              autoSkip: false
             },
             grid: { color: "#f0f2f5" }
           }
@@ -468,6 +469,7 @@ function renderChartTop10Korban() {
           y: {
             ticks: {
               font: { family: "Inter", size: 9 },
+              autoSkip: false
             },
             grid: { color: "#f0f2f5" }
           }
